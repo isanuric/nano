@@ -10,12 +10,16 @@ Spring Boot, RESTful, Mongodb
 `$ mvn spring-boot:run`
 
 ## Endpoints
+#### Get All
+   `$ curl --header "Content-Type: application/json" 
+     --request GET 
+     http://localhost:8080/artist/get/all` 
+#### Get
+ `$ curl --header "Content-Type: application/json" 
+   --request GET 
+   http://localhost:8080/artist/get/<uid>` 
 #### Add
 `$ curl --header "Content-Type: application/json" 
   --request POST 
   --data '{"firstName" : "xyz", "lastName" : "xyz", "genre":"xyz"}' 
   http://localhost:8080/artist/add`
-#### Get
- `$ curl --header "Content-Type: application/json" 
-   --request GET 
-   http://localhost:8080/artist/get/<uid>` 
