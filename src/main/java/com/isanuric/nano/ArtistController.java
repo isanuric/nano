@@ -37,7 +37,7 @@ public class ArtistController {
     }
 
     @GetMapping("/{uid}")
-    public Artist get(@PathVariable Long uid) {
+    public Artist get(@PathVariable String uid) {
         final var artist = this.artistRepository.findByUid(uid);
         return !ObjectUtils.isEmpty(artist) ? artist.get(0) : new Artist(null);
     }
@@ -61,7 +61,7 @@ public class ArtistController {
         HashMap<String, String> map = new HashMap<>();
         map.put("result", "success");
         map.put("uid", String.valueOf(uid));
-        map.put("description", "you can access to your data using uid [" + uid + "]");
+        map.put("description", "you can access to your data using uid: " + uid);
         return map;
     }
 }

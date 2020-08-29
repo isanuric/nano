@@ -7,7 +7,7 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface ArtistRepository extends MongoRepository<Artist, Integer> {
 
-    List<Artist> findByUid(Long uid);
+    List<Artist> findByUid(String uid);
 
     List<Artist> findByLastName(String lastName);
 
