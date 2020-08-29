@@ -1,18 +1,20 @@
 package com.isanuric.nano.dao;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.Transient;
 import org.springframework.data.mongodb.core.index.Indexed;
+import org.springframework.data.mongodb.core.mapping.Document;
 
 @Getter
 @Setter
 @NoArgsConstructor
-@AllArgsConstructor
-//@Document(collection = "Artist")
+@RequiredArgsConstructor
+@Document
 public class Artist {
 
     @Transient
@@ -20,9 +22,11 @@ public class Artist {
 
     @Id
     private String id;
+    @NonNull
     @Indexed(unique = true)
-    private Long uid;
+    private String uid;
     private String firstName;
     private String lastName;
     private String genre;
+
 }

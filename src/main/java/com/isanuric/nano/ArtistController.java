@@ -7,6 +7,7 @@ import com.isanuric.nano.dao.ArtistRepositoryService;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import lombok.NonNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.ObjectUtils;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -38,7 +39,7 @@ public class ArtistController {
     @GetMapping("/{uid}")
     public Artist get(@PathVariable Long uid) {
         final var artist = this.artistRepository.findByUid(uid);
-        return !ObjectUtils.isEmpty(artist) ? artist.get(0) : new Artist();
+        return !ObjectUtils.isEmpty(artist) ? artist.get(0) : new Artist(null);
     }
 
     @GetMapping("/all")
@@ -54,8 +55,9 @@ public class ArtistController {
 
     @PostMapping("/add")
     public Map<String, String> add(@RequestBody Artist artist) {
-        artist.setUid(artistRepositoryService.generateSequence(Artist.SEQUENCE_NAME));
-        final var uid = this.artistRepository.save(artist).getUid();
+        artist.setUid(artistRepositoryService.generateSequence(artist.getLastName(), Artist.SEQUENCE_NAME));
+        @NonNull final var uid = this.artistRepository.save(artist).getUid();
+
         HashMap<String, String> map = new HashMap<>();
         map.put("result", "success");
         map.put("uid", String.valueOf(uid));
