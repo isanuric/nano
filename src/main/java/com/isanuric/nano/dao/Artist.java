@@ -28,5 +28,6 @@ public class Artist {
     private String firstName;
     private String lastName;
     private String genre;
+    private String email;
 
 }
