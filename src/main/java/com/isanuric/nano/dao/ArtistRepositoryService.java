@@ -1,5 +1,12 @@
 package com.isanuric.nano.dao;
 
+import static com.mongodb.client.model.Filters.and;
+import static com.mongodb.client.model.Filters.eq;
+import static com.mongodb.client.model.Filters.lte;
+import static com.mongodb.client.model.Indexes.descending;
+import static com.mongodb.client.model.Projections.excludeId;
+import static com.mongodb.client.model.Projections.fields;
+import static com.mongodb.client.model.Projections.include;
 import static org.springframework.data.mongodb.core.FindAndModifyOptions.options;
 import static org.springframework.data.mongodb.core.query.Criteria.where;
 import static org.springframework.data.mongodb.core.query.Query.query;
@@ -7,6 +14,7 @@ import static org.springframework.data.mongodb.core.query.Query.query;
 import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.model.Filters;
+import java.util.ArrayList;
 import java.util.List;
 import lombok.NonNull;
 import org.bson.Document;
@@ -71,5 +79,14 @@ public class ArtistRepositoryService {
         query.fields().include("uid").include("age").exclude("id");
         query.addCriteria(Criteria.where("age").gt(age));
         return mongoTemplate.find(query, Artist.class);
+    }
+
+    public void indexing() {
+        artists.find(and(eq("student_id", 10001), lte("class_id", 5)))
+                .projection(fields(excludeId(), include("class_id", "student_id")))
+                .sort(descending("class_id"))
+                .skip(2)
+                .limit(2)
+                .into(new ArrayList<>());
     }
 }

@@ -22,14 +22,17 @@ public class Artist {
 
     @Id
     private String id;
+
     @NonNull
     @Indexed(unique = true)
     private String uid;
+
     private String firstName;
     private String lastName;
     private String genre;
     private String email;
     private String sex;
+    private String category;
     private int age;
 
     @Override
@@ -42,6 +45,7 @@ public class Artist {
                 ", genre='" + genre + '\'' +
                 ", email='" + email + '\'' +
                 ", sex='" + sex + '\'' +
+                ", category='" + category + '\'' +
                 ", age=" + age +
                 '}';
     }
