@@ -66,4 +66,10 @@ class ArtistControllerTest {
     void createDocument() {
         artistRepositoryService.createDocument("directors");
     }
+
+    @Test
+    void findAgeOver18() {
+        final List<Artist> ageOver = artistRepositoryService.findAgeOver(18);
+        ageOver.forEach(System.out::println);
+    }
 }

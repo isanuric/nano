@@ -12,6 +12,7 @@ import lombok.NonNull;
 import org.bson.Document;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoOperations;
+import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
@@ -21,14 +22,17 @@ import org.springframework.stereotype.Service;
 public class ArtistRepositoryService {
 
     private final MongoOperations mongoOperations;
+    private final MongoTemplate mongoTemplate;
 
     private final MongoCollection<Document> artists;
 
 
     @Autowired
-    public ArtistRepositoryService(MongoOperations mongoOperations) {
+    public ArtistRepositoryService(MongoOperations mongoOperations,
+            MongoTemplate mongoTemplate) {
         this.mongoOperations = mongoOperations;
-        artists = mongoOperations.getCollection("artist");
+        this.mongoTemplate = mongoTemplate;
+        this.artists = mongoOperations.getCollection("artist");
     }
 
     public String generateUniqUid(String lastName, String seqName) {
@@ -57,9 +61,15 @@ public class ArtistRepositoryService {
         directors.insertOne(lynch);
     }
 
-
     public List<Artist> findByMaxAge(int age) {
         // return artists.find(Filters.lte("age", 50));
         return mongoOperations.find(new Query(Criteria.where("age").lte(age)), Artist.class);
+    }
+
+    public List<Artist> findAgeOver(int age) {
+        Query query = new Query();
+        query.fields().include("uid").include("age").exclude("id");
+        query.addCriteria(Criteria.where("age").gt(age));
+        return mongoTemplate.find(query, Artist.class);
     }
 }
