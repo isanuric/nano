@@ -29,5 +29,20 @@ public class Artist {
     private String lastName;
     private String genre;
     private String email;
+    private String sex;
+    private int age;
 
+    @Override
+    public String toString() {
+        return "Artist{" +
+                "id='" + id + '\'' +
+                ", uid='" + uid + '\'' +
+                ", firstName='" + firstName + '\'' +
+                ", lastName='" + lastName + '\'' +
+                ", genre='" + genre + '\'' +
+                ", email='" + email + '\'' +
+                ", sex='" + sex + '\'' +
+                ", age=" + age +
+                '}';
+    }
 }

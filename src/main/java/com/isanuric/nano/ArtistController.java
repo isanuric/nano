@@ -55,7 +55,7 @@ public class ArtistController {
 
     @PostMapping("/add")
     public Map<String, String> add(@RequestBody Artist artist) {
-        artist.setUid(artistRepositoryService.generateSequence(artist.getLastName(), Artist.SEQUENCE_NAME));
+        artist.setUid(artistRepositoryService.generateUniqUid(artist.getLastName(), Artist.SEQUENCE_NAME));
         @NonNull final var uid = this.artistRepository.save(artist).getUid();
 
         HashMap<String, String> map = new HashMap<>();

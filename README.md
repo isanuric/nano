@@ -13,7 +13,7 @@ Spring Boot, RESTful, Mongodb
 #### Get All
 `$ curl --header "Content-Type: application/json" 
  --request GET 
- http://localhost:8080/artist/all` 
+ http://localhost:8080/artist/all | json_pp` 
 #### Get
 `$ curl --header "Content-Type: application/json" 
 --request GET 
