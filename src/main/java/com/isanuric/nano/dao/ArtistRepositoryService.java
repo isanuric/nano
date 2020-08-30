@@ -2,8 +2,8 @@ package com.isanuric.nano.dao;
 
 import static com.mongodb.client.model.Filters.and;
 import static com.mongodb.client.model.Filters.eq;
-import static com.mongodb.client.model.Filters.lte;
-import static com.mongodb.client.model.Indexes.descending;
+import static com.mongodb.client.model.Filters.gte;
+import static com.mongodb.client.model.Indexes.ascending;
 import static com.mongodb.client.model.Projections.excludeId;
 import static com.mongodb.client.model.Projections.fields;
 import static com.mongodb.client.model.Projections.include;
@@ -81,12 +81,17 @@ public class ArtistRepositoryService {
         return mongoTemplate.find(query, Artist.class);
     }
 
-    public void indexing() {
-        artists.find(and(eq("student_id", 10001), lte("class_id", 5)))
-                .projection(fields(excludeId(), include("class_id", "student_id")))
-                .sort(descending("class_id"))
-                .skip(2)
-                .limit(2)
+    public ArrayList<Document> find(String sex) {
+        return artists.find(and(eq("sex", sex)))
+                .projection(fields(excludeId(), include("uid", "sex", "age")))
+                .sort(ascending("age"))
+                .into(new ArrayList<>());
+    }
+
+    public ArrayList<Document> find(String sex, int age) {
+        return artists.find(and(eq("sex", sex), gte("age", age)))
+                .projection(fields(excludeId(), include("uid", "sex", "age")))
+                .sort(ascending("age"))
                 .into(new ArrayList<>());
     }
 }

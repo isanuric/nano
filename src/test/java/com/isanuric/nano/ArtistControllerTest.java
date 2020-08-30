@@ -7,6 +7,7 @@ import com.isanuric.nano.dao.Artist;
 import com.isanuric.nano.dao.ArtistRepository;
 import com.isanuric.nano.dao.ArtistRepositoryService;
 import com.mongodb.client.FindIterable;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 import org.apache.commons.lang3.RandomStringUtils;
@@ -41,7 +42,7 @@ class ArtistControllerTest {
         List<String> category = Lists.newArrayList("actor", "painter", "musician", "author", "dancer");
         List<String> sex = Lists.newArrayList("female", "male", "transgender");
         List<String> email = Lists.newArrayList("@gmail.com", "@gmx.de", "@yahoo.com", "@university.fr");
-        range(0, 10).forEach(i -> {
+        range(0, 30).forEach(i -> {
             final var randomString = RandomStringUtils.random(5, true, false).toLowerCase();
             final var sequence = artistRepositoryService.generateUniqUid(randomString, Artist.SEQUENCE_NAME);
             final var lastName = randomString + randomString;
@@ -85,7 +86,14 @@ class ArtistControllerTest {
     }
 
     @Test
-    void indexing() {
-        artistRepositoryService.indexing();
+    void findByGender() {
+        final ArrayList<Document> indexing = artistRepositoryService.find("transgender");
+        indexing.forEach(System.out::println);
+    }
+
+    @Test
+    void findByGenderAndAge() {
+        final ArrayList<Document> indexing = artistRepositoryService.find("male", 20);
+        indexing.forEach(System.out::println);
     }
 }
