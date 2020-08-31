@@ -111,11 +111,8 @@ class ArtistRepositoryServiceTest {
 
     @Test
     void findByGenreGenderMinAge() {
-        final ArrayList<Document> byGenreGenderMinAge = artistService
-                .findByGenreGenderMinAge("Installation art", "female", 20);
-        byGenreGenderMinAge.stream().forEach(v -> {
-            System.out.println(byGenreGenderMinAge.iterator().next().toJson(prettyPrint));
-        });
+        final var result = artistService.findByGenreGenderMinAge("Dada", "female", 20);
+        result.stream().forEach(v -> System.out.println(result.iterator().next().toJson(prettyPrint)));
     }
 
 }
