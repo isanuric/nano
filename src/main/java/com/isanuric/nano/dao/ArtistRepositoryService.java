@@ -4,6 +4,7 @@ import static com.mongodb.client.model.Filters.and;
 import static com.mongodb.client.model.Filters.eq;
 import static com.mongodb.client.model.Filters.gt;
 import static com.mongodb.client.model.Indexes.ascending;
+import static com.mongodb.client.model.Projections.exclude;
 import static com.mongodb.client.model.Projections.excludeId;
 import static com.mongodb.client.model.Projections.fields;
 import static com.mongodb.client.model.Projections.include;
@@ -117,5 +118,10 @@ public class ArtistRepositoryService {
     public ArrayList<Document> findByGenreGenderMinAge(String genre, String gender, int minAge) {
         Bson filter = Filters.and(eq("genre", genre), eq("sex", gender), gt("age", minAge));
         return artists.find(filter).into(new ArrayList<>());
+    }
+
+    public ArrayList<Document> findAll() {
+        Bson filter = eq("uid");
+        return artists.find().projection(fields(excludeId(), exclude("_class"))).into(new ArrayList<>());
     }
 }

@@ -111,8 +111,11 @@ class ArtistRepositoryServiceTest {
 
     @Test
     void findByGenreGenderMinAge() {
-        final var result = artistService.findByGenreGenderMinAge("Dada", "female", 20);
-        result.stream().forEach(v -> System.out.println(result.iterator().next().toJson(prettyPrint)));
+        artistService.findByGenreGenderMinAge("Dada", "female", 20).forEach(System.out::println);
     }
 
+    @Test
+    void findAll() {
+        artistService.findAll().forEach(System.out::println);
+    }
 }
