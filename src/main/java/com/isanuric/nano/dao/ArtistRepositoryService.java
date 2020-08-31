@@ -1,12 +1,11 @@
 package com.isanuric.nano.dao;
 
 import static com.mongodb.client.model.Filters.and;
-import static com.mongodb.client.model.Filters.eq;
-import static com.mongodb.client.model.Filters.gte;
 import static com.mongodb.client.model.Indexes.ascending;
 import static com.mongodb.client.model.Projections.excludeId;
 import static com.mongodb.client.model.Projections.fields;
 import static com.mongodb.client.model.Projections.include;
+import static com.mongodb.client.model.Updates.set;
 import static org.springframework.data.mongodb.core.FindAndModifyOptions.options;
 import static org.springframework.data.mongodb.core.query.Criteria.where;
 import static org.springframework.data.mongodb.core.query.Query.query;
@@ -14,10 +13,12 @@ import static org.springframework.data.mongodb.core.query.Query.query;
 import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.model.Filters;
+import com.mongodb.client.result.UpdateResult;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.NonNull;
 import org.bson.Document;
+import org.bson.conversions.Bson;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -82,16 +83,31 @@ public class ArtistRepositoryService {
     }
 
     public ArrayList<Document> find(String sex) {
-        return artists.find(and(eq("sex", sex)))
+        return artists.find(and(Filters.eq("sex", sex)))
                 .projection(fields(excludeId(), include("uid", "sex", "age")))
                 .sort(ascending("age"))
                 .into(new ArrayList<>());
     }
 
     public ArrayList<Document> find(String sex, int age) {
-        return artists.find(and(eq("sex", sex), gte("age", age)))
+        return artists.find(and(Filters.eq("sex", sex), Filters.gte("age", age)))
                 .projection(fields(excludeId(), include("uid", "sex", "age")))
                 .sort(ascending("age"))
                 .into(new ArrayList<>());
+    }
+
+    public void updateUser(String searchValue, String toChangeField, String newValue) {
+        updateUser("uid", searchValue, toChangeField, newValue);
+    }
+
+    public UpdateResult updateUser(String searchField, String searchValue, String toChangeField, String toChangeValue) {
+        Bson filter = Filters.eq(searchField, searchValue);
+        Bson updateOperation = set(toChangeField, toChangeValue);
+        return artists.updateOne(filter, updateOperation);
+    }
+
+    public Document findByUid(String uid) {
+        Bson filter = Filters.eq("uid", uid);
+        return artists.find(filter).first();
     }
 }
