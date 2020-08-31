@@ -1,7 +1,9 @@
 package com.isanuric.nano;
 
 import static java.lang.String.format;
+import static java.lang.String.valueOf;
 import static java.util.stream.IntStream.range;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import com.isanuric.nano.dao.Artist;
 import com.isanuric.nano.dao.ArtistRepository;
@@ -28,6 +30,7 @@ class ArtistControllerTest {
     private ArtistRepositoryService artistRepositoryService;
 
     private JsonWriterSettings prettyPrint = JsonWriterSettings.builder().indent(true).build();
+    Random random = new Random();
 
 
     private static void printUid(Document document) {
@@ -41,7 +44,6 @@ class ArtistControllerTest {
     }
 
     private void createRandomArtist() {
-        Random random = new Random();
         List<String> geners = Lists.newArrayList("Dada", "Installation art", "Magic realism", "Analytical art");
         List<String> email = Lists.newArrayList("@gmail.com", "@gmx.de", "@yahoo.com", "@university.fr");
         List<String> category = Lists.newArrayList("actor", "painter", "musician", "author", "dancer");
@@ -104,8 +106,9 @@ class ArtistControllerTest {
 
     @Test
     void updateUser() {
-        artistRepositoryService.updateUser("uidTester", "age", "40");
-        final var userTester = artistRepositoryService.findByUid("uidTester");
-        System.out.println(userTester.toJson(prettyPrint));
+        range(0, 10).mapToObj(v -> valueOf(random.nextInt(100))).forEach(randomValue -> {
+            artistRepositoryService.updateUser("uidTester", "age", randomValue);
+            assertEquals(true, artistRepositoryService.findByUid("uidTester").toJson().contains(randomValue));
+        });
     }
 }

@@ -90,7 +90,8 @@ public class ArtistRepositoryService {
     }
 
     public ArrayList<Document> find(String sex, int age) {
-        return artists.find(and(Filters.eq("sex", sex), Filters.gte("age", age)))
+        final Bson filter = Filters.and(Filters.eq("sex", sex), Filters.gte("age", age));
+        return artists.find(filter)
                 .projection(fields(excludeId(), include("uid", "sex", "age")))
                 .sort(ascending("age"))
                 .into(new ArrayList<>());
