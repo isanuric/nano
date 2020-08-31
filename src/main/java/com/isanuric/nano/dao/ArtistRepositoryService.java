@@ -1,6 +1,8 @@
 package com.isanuric.nano.dao;
 
 import static com.mongodb.client.model.Filters.and;
+import static com.mongodb.client.model.Filters.eq;
+import static com.mongodb.client.model.Filters.gt;
 import static com.mongodb.client.model.Indexes.ascending;
 import static com.mongodb.client.model.Projections.excludeId;
 import static com.mongodb.client.model.Projections.fields;
@@ -83,14 +85,14 @@ public class ArtistRepositoryService {
     }
 
     public ArrayList<Document> find(String sex) {
-        return artists.find(and(Filters.eq("sex", sex)))
+        return artists.find(and(eq("sex", sex)))
                 .projection(fields(excludeId(), include("uid", "sex", "age")))
                 .sort(ascending("age"))
                 .into(new ArrayList<>());
     }
 
     public ArrayList<Document> find(String sex, int age) {
-        final Bson filter = Filters.and(Filters.eq("sex", sex), Filters.gte("age", age));
+        final Bson filter = Filters.and(eq("sex", sex), Filters.gte("age", age));
         return artists.find(filter)
                 .projection(fields(excludeId(), include("uid", "sex", "age")))
                 .sort(ascending("age"))
@@ -102,13 +104,18 @@ public class ArtistRepositoryService {
     }
 
     public UpdateResult updateUser(String searchField, String searchValue, String toChangeField, String toChangeValue) {
-        Bson filter = Filters.eq(searchField, searchValue);
+        Bson filter = eq(searchField, searchValue);
         Bson updateOperation = set(toChangeField, toChangeValue);
         return artists.updateOne(filter, updateOperation);
     }
 
     public Document findByUid(String uid) {
-        Bson filter = Filters.eq("uid", uid);
+        Bson filter = eq("uid", uid);
         return artists.find(filter).first();
+    }
+
+    public ArrayList<Document> findByGenreGenderMinAge(String genre, String gender, int minAge) {
+        Bson filter = Filters.and(eq("genre", genre), eq("sex", gender), gt("age", minAge));
+        return artists.find(filter).into(new ArrayList<>());
     }
 }

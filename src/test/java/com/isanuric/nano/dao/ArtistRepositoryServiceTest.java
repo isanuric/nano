@@ -1,13 +1,10 @@
-package com.isanuric.nano;
+package com.isanuric.nano.dao;
 
 import static java.lang.String.format;
 import static java.lang.String.valueOf;
 import static java.util.stream.IntStream.range;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import com.isanuric.nano.dao.Artist;
-import com.isanuric.nano.dao.ArtistRepository;
-import com.isanuric.nano.dao.ArtistRepositoryService;
 import com.mongodb.client.FindIterable;
 import java.util.ArrayList;
 import java.util.List;
@@ -21,21 +18,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class ArtistControllerTest {
+class ArtistRepositoryServiceTest {
 
     @Autowired
     private ArtistRepository artistRepository;
 
     @Autowired
-    private ArtistRepositoryService artistRepositoryService;
+    private ArtistRepositoryService artistService;
 
     private JsonWriterSettings prettyPrint = JsonWriterSettings.builder().indent(true).build();
-    Random random = new Random();
+    private Random random = new Random();
 
-
-    private static void printUid(Document document) {
-        System.out.println(document.getString("uid"));
-    }
 
     @Test
     void updateDB() {
@@ -50,7 +43,7 @@ class ArtistControllerTest {
         List<String> sex = Lists.newArrayList("female", "male", "transgender");
         range(0, 30).forEach(i -> {
             final var randomString = RandomStringUtils.random(5, true, false).toLowerCase();
-            final var sequence = artistRepositoryService.generateUniqUid(randomString, Artist.SEQUENCE_NAME);
+            final var sequence = artistService.generateUniqUid(randomString, Artist.SEQUENCE_NAME);
             final var lastName = randomString + randomString;
 
             final var artist = new Artist(sequence);
@@ -69,13 +62,17 @@ class ArtistControllerTest {
 
     @Test
     void findFemalesAll() {
-        final FindIterable<Document> femalesAll = artistRepositoryService.findFemalesAll();
-        femalesAll.forEach(ArtistControllerTest::printUid);
+        final FindIterable<Document> femalesAll = artistService.findFemalesAll();
+        femalesAll.forEach(this::printUid);
+    }
+
+    private void printUid(Document document) {
+        System.out.println(document.getString("uid"));
     }
 
     @Test
     void findByMaxAge() {
-        final List<Artist> underAge = artistRepositoryService.findByMaxAge(50);
+        final List<Artist> underAge = artistService.findByMaxAge(50);
         underAge.stream()
                 .map(artist -> format("uid: %s, age: %d", artist.getUid(), artist.getAge()))
                 .forEach(System.out::println);
@@ -83,32 +80,42 @@ class ArtistControllerTest {
 
     @Test
     void createDocument() {
-        artistRepositoryService.createDocument("directors");
+        artistService.createDocument("directors");
     }
 
     @Test
     void findAgeOver18() {
-        final List<Artist> ageOver = artistRepositoryService.findAgeOver(18);
+        final List<Artist> ageOver = artistService.findAgeOver(18);
         ageOver.forEach(System.out::println);
     }
 
     @Test
     void findByGender() {
-        final ArrayList<Document> indexing = artistRepositoryService.find("transgender");
+        final ArrayList<Document> indexing = artistService.find("transgender");
         indexing.forEach(System.out::println);
     }
 
     @Test
     void findByGenderAndAge() {
-        final ArrayList<Document> indexing = artistRepositoryService.find("male", 20);
+        final ArrayList<Document> indexing = artistService.find("male", 20);
         indexing.forEach(System.out::println);
     }
 
     @Test
     void updateUser() {
         range(0, 10).mapToObj(v -> valueOf(random.nextInt(100))).forEach(randomValue -> {
-            artistRepositoryService.updateUser("uidTester", "age", randomValue);
-            assertEquals(true, artistRepositoryService.findByUid("uidTester").toJson().contains(randomValue));
+            artistService.updateUser("uidTester", "age", randomValue);
+            assertEquals(true, artistService.findByUid("uidTester").toJson().contains(randomValue));
         });
     }
+
+    @Test
+    void findByGenreGenderMinAge() {
+        final ArrayList<Document> byGenreGenderMinAge = artistService
+                .findByGenreGenderMinAge("Installation art", "female", 20);
+        byGenreGenderMinAge.stream().forEach(v -> {
+            System.out.println(byGenreGenderMinAge.iterator().next().toJson(prettyPrint));
+        });
+    }
+
 }
