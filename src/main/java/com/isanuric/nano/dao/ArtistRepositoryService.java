@@ -14,6 +14,7 @@ import static org.springframework.data.mongodb.core.query.Criteria.where;
 import static org.springframework.data.mongodb.core.query.Query.query;
 
 import com.mongodb.client.FindIterable;
+import com.mongodb.client.ListIndexesIterable;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.model.Filters;
 import com.mongodb.client.result.UpdateResult;
@@ -121,7 +122,17 @@ public class ArtistRepositoryService {
     }
 
     public ArrayList<Document> findAll() {
-        Bson filter = eq("uid");
         return artists.find().projection(fields(excludeId(), exclude("_class"))).into(new ArrayList<>());
+    }
+
+    public ArrayList<Document> findAllUids() {
+        return artists.find().projection(fields(excludeId(), include("uid")))
+                .sort(ascending("uid"))
+                .into(new ArrayList<>());
+    }
+
+    public ListIndexesIterable<Document> getIndexing() {
+//        IndexOptions indexOptions = new IndexOptions().name("uid").unique(true);
+        return artists.listIndexes();
     }
 }

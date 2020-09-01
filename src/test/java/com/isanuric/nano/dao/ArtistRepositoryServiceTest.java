@@ -9,6 +9,7 @@ import com.mongodb.client.FindIterable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import java.util.function.Consumer;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.assertj.core.util.Lists;
 import org.bson.Document;
@@ -29,9 +30,16 @@ class ArtistRepositoryServiceTest {
     private JsonWriterSettings prettyPrint = JsonWriterSettings.builder().indent(true).build();
     private Random random = new Random();
 
+    private static Consumer<Document> print = new Consumer<Document>() {
+        @Override
+        public void accept(final Document document) {
+            System.out.println(document.toJson());
+        }
+    };
+
 
     @Test
-    void updateDB() {
+    void populateDB() {
         artistRepository.deleteAll();
         this.createRandomArtist();
     }
@@ -92,13 +100,13 @@ class ArtistRepositoryServiceTest {
     @Test
     void findByGender() {
         final ArrayList<Document> indexing = artistService.find("transgender");
-        indexing.forEach(System.out::println);
+        indexing.forEach(print);
     }
 
     @Test
     void findByGenderAndAge() {
         final ArrayList<Document> indexing = artistService.find("male", 20);
-        indexing.forEach(System.out::println);
+        indexing.forEach(print);
     }
 
     @Test
@@ -111,11 +119,25 @@ class ArtistRepositoryServiceTest {
 
     @Test
     void findByGenreGenderMinAge() {
-        artistService.findByGenreGenderMinAge("Dada", "female", 20).forEach(System.out::println);
+        artistService.findByGenreGenderMinAge("Dada", "female", 20).forEach(print);
     }
 
     @Test
     void findAll() {
-        artistService.findAll().forEach(System.out::println);
+        artistService.findAll().forEach(print);
     }
+
+    @Test
+    void findAllUids() {
+        artistService.findAllUids().forEach(print);
+    }
+
+    @Test
+    void getIndexing() {
+        System.out.println();
+        final ArrayList<Document> into = artistService.getIndexing().into(new ArrayList<>());
+        into.forEach(System.out::println);
+    }
+
+
 }
