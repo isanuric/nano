@@ -8,6 +8,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import lombok.NonNull;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.ObjectUtils;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -21,7 +23,9 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/artist")
 public class ArtistController {
 
-    private ArtistRepository artistRepository;
+    private static final Logger logger = LoggerFactory.getLogger(ArtistController.class);
+
+    private final ArtistRepository artistRepository;
     private ArtistRepositoryService artistRepositoryService;
 
     @Autowired
@@ -44,6 +48,7 @@ public class ArtistController {
 
     @GetMapping("/all")
     public List<Artist> getAll() {
+        logger.info("All: [{}]", artistRepository.findAll());
         return artistRepository.findAll();
     }
 

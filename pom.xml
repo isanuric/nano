@@ -38,8 +38,8 @@
 			<version>3.11</version>
 		</dependency>
 		<dependency>
-			<artifactId>spring-security-core</artifactId>
-			<groupId>org.springframework.security</groupId>
+			<artifactId>spring-boot-starter-security</artifactId>
+			<groupId>org.springframework.boot</groupId>
 		</dependency>
 
 		<dependency>
