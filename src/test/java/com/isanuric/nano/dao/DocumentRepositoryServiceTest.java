@@ -5,6 +5,10 @@ import static java.lang.String.valueOf;
 import static java.util.stream.IntStream.range;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import com.isanuric.nano.artist.Artist;
+import com.isanuric.nano.artist.ArtistAutoRepository;
+import com.isanuric.nano.artist.DocumentRepositoryService;
+import com.isanuric.nano.dao.uniqid.UniqID;
 import com.mongodb.client.FindIterable;
 import java.util.ArrayList;
 import java.util.List;

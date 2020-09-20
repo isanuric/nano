@@ -1,4 +1,4 @@
-package com.isanuric.nano.dao;
+package com.isanuric.nano.artist;
 
 import static com.mongodb.client.model.Filters.and;
 import static com.mongodb.client.model.Filters.eq;

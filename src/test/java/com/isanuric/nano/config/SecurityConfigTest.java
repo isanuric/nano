@@ -1,7 +1,7 @@
 package com.isanuric.nano.config;
 
 import com.isanuric.nano.BaseTest;
-import com.isanuric.nano.dao.UsersRepository;
+import com.isanuric.nano.dao.user.UsersRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;

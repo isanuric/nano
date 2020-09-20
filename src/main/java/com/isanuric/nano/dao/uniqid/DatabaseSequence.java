@@ -1,11 +1,10 @@
-package com.isanuric.nano.dao;
+package com.isanuric.nano.dao.uniqid;
 
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-//@Document(collection = "database_sequences")
 @Getter
 @Setter
 @Document

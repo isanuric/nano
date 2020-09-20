@@ -1,4 +1,4 @@
-package com.isanuric.nano.dao;
+package com.isanuric.nano.dao.user;
 
 //import jakarta.validation.constraints.Pattern;
 

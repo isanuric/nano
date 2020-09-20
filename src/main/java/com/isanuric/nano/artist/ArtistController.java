@@ -1,14 +1,9 @@
-package com.isanuric.nano;
+package com.isanuric.nano.artist;
 
 
 import static org.springframework.util.Assert.notNull;
 
-import com.isanuric.nano.dao.Artist;
-import com.isanuric.nano.dao.ArtistAutoRepository;
-import com.isanuric.nano.dao.ArtistRepository;
-import com.isanuric.nano.dao.ArtistService;
 import java.util.List;
-import java.util.Optional;
 import javax.validation.Valid;
 import javax.validation.constraints.Pattern;
 import net.minidev.json.JSONObject;
@@ -47,12 +42,19 @@ public class ArtistController {
     @GetMapping("/{uid}")
     public Artist get(@Valid @Pattern(regexp = "^[a-zA-Z0-9]*$") @PathVariable String uid) {
         notNull(uid, "uid must not be empty");
-        final Optional<Artist> artist;
-        artist = this.artistService.findByUid(uid);
-        logger.info("artist: [{}]", artist.toString());
-        return artist.orElse(null);
+        return this.artistService.findByUid(uid);
+    }
 
+    @GetMapping("/genre/{genre}")
+    public List<Artist> findByGenre(@Valid @Pattern(regexp = "^[a-zA-Z0-9]*$") @PathVariable String genre) {
+        notNull(genre, "genre must not be empty");
+        return this.artistService.findByGenre(genre);
+    }
 
+    @GetMapping("/genre-not/{genre}")
+    public List<JSONObject> findByGenreNotEqual(@Valid @Pattern(regexp = "^[a-zA-Z0-9]*$") @PathVariable String genre) {
+        notNull(genre, "genre must not be empty");
+        return this.artistService.findByGenreNotEqual(genre);
     }
 
     @GetMapping("/all")

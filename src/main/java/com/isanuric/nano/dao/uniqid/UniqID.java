@@ -1,10 +1,11 @@
-package com.isanuric.nano.dao;
+package com.isanuric.nano.dao.uniqid;
 
 
 import static org.springframework.data.mongodb.core.FindAndModifyOptions.options;
 import static org.springframework.data.mongodb.core.query.Criteria.where;
 import static org.springframework.data.mongodb.core.query.Query.query;
 
+import com.isanuric.nano.artist.Artist;
 import lombok.NonNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoOperations;

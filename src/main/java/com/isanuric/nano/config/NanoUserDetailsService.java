@@ -3,8 +3,8 @@ package com.isanuric.nano.config;
 
 import static java.util.Arrays.asList;
 
-import com.isanuric.nano.dao.Artist;
-import com.isanuric.nano.dao.ArtistAutoRepository;
+import com.isanuric.nano.artist.Artist;
+import com.isanuric.nano.artist.ArtistAutoRepository;
 import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
