@@ -1,17 +1,23 @@
 package com.isanuric.nano;
 
 
+import static org.springframework.util.Assert.notNull;
+
 import com.isanuric.nano.dao.Artist;
+import com.isanuric.nano.dao.ArtistAutoRepository;
 import com.isanuric.nano.dao.ArtistRepository;
-import com.isanuric.nano.dao.ArtistRepositoryService;
-import java.util.HashMap;
+import com.isanuric.nano.dao.ArtistService;
 import java.util.List;
-import java.util.Map;
-import lombok.NonNull;
+import java.util.Optional;
+import javax.validation.Valid;
+import javax.validation.constraints.Pattern;
+import net.minidev.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.util.ObjectUtils;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -19,54 +25,58 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+//@ControllerAdvice
 @RestController
 @RequestMapping("/artist")
 public class ArtistController {
 
     private static final Logger logger = LoggerFactory.getLogger(ArtistController.class);
 
+    private final ArtistAutoRepository artistAutoRepository;
     private final ArtistRepository artistRepository;
-    private ArtistRepositoryService artistRepositoryService;
+    private final ArtistService artistService;
 
     @Autowired
-    public ArtistController(
-            ArtistRepository artistRepository,
-            ArtistRepositoryService artistRepositoryService) {
+    public ArtistController(ArtistAutoRepository artistAutoRepository,
+            ArtistRepository artistRepository, ArtistService artistService) {
+        this.artistAutoRepository = artistAutoRepository;
         this.artistRepository = artistRepository;
-        this.artistRepositoryService = artistRepositoryService;
-    }
-
-    public ArtistController(ArtistRepository artistRepository) {
-        this.artistRepository = artistRepository;
+        this.artistService = artistService;
     }
 
     @GetMapping("/{uid}")
-    public Artist get(@PathVariable String uid) {
-        final var artist = this.artistRepository.findByUid(uid);
-        return !ObjectUtils.isEmpty(artist) ? artist.get(0) : new Artist(null);
+    public Artist get(@Valid @Pattern(regexp = "^[a-zA-Z0-9]*$") @PathVariable String uid) {
+        notNull(uid, "uid must not be empty");
+        final Optional<Artist> artist;
+        artist = this.artistService.findByUid(uid);
+        logger.info("artist: [{}]", artist.toString());
+        return artist.orElse(null);
+
+
     }
 
     @GetMapping("/all")
     public List<Artist> getAll() {
-        logger.info("All: [{}]", artistRepository.findAll());
-        return artistRepository.findAll();
+        return artistAutoRepository.findAll();
     }
 
     @GetMapping("/delete-all")
     public Object deleteAll() {
-        artistRepository.deleteAll();
-        return artistRepository.findAll().isEmpty() ? "success" : "Can not delete all entries";
+        artistAutoRepository.deleteAll();
+        return artistAutoRepository.findAll().isEmpty() ? "success" : "Can not delete all entries";
     }
 
     @PostMapping("/add")
-    public Map<String, String> add(@RequestBody Artist artist) {
-        artist.setUid(artistRepositoryService.generateUniqUid(artist.getLastName(), Artist.SEQUENCE_NAME));
-        @NonNull final var uid = this.artistRepository.save(artist).getUid();
+    public ResponseEntity<JSONObject> add(@Valid @RequestBody Artist artist) {
+        final var saved = artistService.save(artist);
 
-        HashMap<String, String> map = new HashMap<>();
-        map.put("result", "success");
-        map.put("uid", String.valueOf(uid));
-        map.put("description", "you can access to your data using uid: " + uid);
-        return map;
+        final var responseHeaders = new HttpHeaders();
+        responseHeaders.set("uid", saved.getUid());
+
+        final var jsonObject = new JSONObject();
+        jsonObject.put("uid", saved.getUid());
+        jsonObject.put("description", "you can access to your data using uid: " + saved.getUid());
+
+        return new ResponseEntity<>(jsonObject, responseHeaders, HttpStatus.CREATED);
     }
 }

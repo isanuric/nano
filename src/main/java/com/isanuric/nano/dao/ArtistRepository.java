@@ -1,20 +1,41 @@
 package com.isanuric.nano.dao;
 
+
 import java.util.List;
-import org.springframework.data.mongodb.repository.MongoRepository;
-import org.springframework.stereotype.Repository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.stereotype.Service;
 
-@Repository
-public interface ArtistRepository extends MongoRepository<Artist, Integer> {
+@Service
+public class ArtistRepository {
 
-    List<Artist> findByUid(String uid);
+    private final MongoTemplate mongoTemplate;
 
-    List<Artist> findByLastName(String lastName);
+    @Autowired
+    public ArtistRepository(MongoTemplate mongoTemplate) {
+        this.mongoTemplate = mongoTemplate;
+    }
 
-    List<Artist> findByFirstName(String firstName);
+    public List<Artist> findAgeOver(int age) {
+        Query query = new Query();
+        query.fields().include("uid").include("age").exclude("id");
+        query.addCriteria(Criteria.where("age").gt(age));
+        return mongoTemplate.find(query, Artist.class);
+    }
 
-    List<Artist> findByFirstNameLike(String firstName);
+//    public Artist findByUid(String uid) {
+////        Assert.notNull(find("uid", uid), "uid not found");
+//        return find("uid", uid).get(0);
+//    }
 
-    List<Artist> findByGenre(String genre);
+    public List<Artist> find(Query query) {
+        return mongoTemplate.find(query, Artist.class);
+    }
+
+    public Artist save(Artist artist) {
+        return mongoTemplate.save(artist);
+    }
 
 }

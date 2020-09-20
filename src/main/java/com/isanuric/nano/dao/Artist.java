@@ -1,5 +1,10 @@
 package com.isanuric.nano.dao;
 
+//import javax.validation.constraints.Pattern;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import javax.validation.constraints.Pattern;
+import javax.validation.constraints.Size;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
@@ -19,6 +24,7 @@ public class Artist {
 
     @Transient
     public static final String SEQUENCE_NAME = "users_sequence";
+    private static final String ALPHANUMERIC = "^[a-zA-Z0-9_]*$";
 
     @Id
     private String id;
@@ -27,11 +33,27 @@ public class Artist {
     @Indexed(unique = true)
     private String uid;
 
+    @JsonIgnore
+    @NonNull
+    @Size(min = 6, message = "Password length must be at least 6")
+    private String password;
+
+    private String role;
+
+    @Pattern(regexp = ALPHANUMERIC)
     private String firstName;
+
+    @Pattern(regexp = ALPHANUMERIC)
     private String lastName;
+
+    @Pattern(regexp = ALPHANUMERIC)
     private String genre;
     private String email;
+
+    @Pattern(regexp = ALPHANUMERIC)
     private String sex;
+
+    @Pattern(regexp = ALPHANUMERIC)
     private String category;
     private int age;
 

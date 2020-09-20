@@ -1,10 +1,10 @@
-package com.isanuric.nano;
+package com.isanuric.nano.config;
 
 
 import static java.util.Arrays.asList;
 
-import com.isanuric.nano.dao.Users;
-import com.isanuric.nano.dao.UsersRepository;
+import com.isanuric.nano.dao.Artist;
+import com.isanuric.nano.dao.ArtistAutoRepository;
 import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,24 +21,22 @@ public class NanoUserDetailsService implements UserDetailsService {
 
     private static final Logger logger = LoggerFactory.getLogger(NanoUserDetailsService.class);
 
-    private final UsersRepository usersRepository;
+    private final ArtistAutoRepository artistAutoRepository;
 
     @Autowired
-    public NanoUserDetailsService(UsersRepository usersRepository) {
-        this.usersRepository = usersRepository;
+    public NanoUserDetailsService(ArtistAutoRepository artistAutoRepository) {
+        this.artistAutoRepository = artistAutoRepository;
     }
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        Users user = usersRepository.findByUsername(username);
-        logger.info("username:password [{}]:[{}], Authentication [{}]", user.getUsername(), user.getPassword());
-        if (user == null) {
+        final Artist artis = artistAutoRepository.findByUid(username);
+        if (artis == null) {
             logger.info("User [{}] not found.", username);
             throw new UsernameNotFoundException("User [%s] not found." + username);
         }
-        List<SimpleGrantedAuthority> authorities = asList(new SimpleGrantedAuthority("user"));
-        logger.info("username:password [{}]:[{}], Authentication [{}]", user.getUsername(), user.getPassword(),
-                authorities);
-        return new User(user.getUsername(), user.getPassword(), authorities);
+        List<SimpleGrantedAuthority> authorities = asList(new SimpleGrantedAuthority(artis.getRole()));
+        logger.info("username [{}], authorities [{}]", artis.getUid(), authorities);
+        return new User(artis.getUid(), artis.getPassword(), authorities);
     }
 }

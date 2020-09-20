@@ -3,7 +3,7 @@ package com.isanuric.nano.dao;
 import static java.lang.String.format;
 import static java.lang.String.valueOf;
 import static java.util.stream.IntStream.range;
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.mongodb.client.FindIterable;
 import java.util.ArrayList;
@@ -17,30 +17,26 @@ import org.bson.json.JsonWriterSettings;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 @SpringBootTest
-class ArtistRepositoryServiceTest {
+class DocumentRepositoryServiceTest {
 
+    private static final Consumer<Document> print = document -> System.out.println(document.toJson());
+    private final JsonWriterSettings prettyPrint = JsonWriterSettings.builder().indent(true).build();
+    private final Random random = new Random();
     @Autowired
-    private ArtistRepository artistRepository;
-
+    private ArtistAutoRepository artistAutoRepository;
     @Autowired
-    private ArtistRepositoryService artistService;
-
-    private JsonWriterSettings prettyPrint = JsonWriterSettings.builder().indent(true).build();
-    private Random random = new Random();
-
-    private static Consumer<Document> print = new Consumer<Document>() {
-        @Override
-        public void accept(final Document document) {
-            System.out.println(document.toJson());
-        }
-    };
-
+    private DocumentRepositoryService artistService;
+    @Autowired
+    private UniqID uniqID;
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     @Test
     void populateDB() {
-        artistRepository.deleteAll();
+        artistAutoRepository.deleteAll();
         this.createRandomArtist();
     }
 
@@ -49,23 +45,24 @@ class ArtistRepositoryServiceTest {
         List<String> email = Lists.newArrayList("@gmail.com", "@gmx.de", "@yahoo.com", "@university.fr");
         List<String> category = Lists.newArrayList("actor", "painter", "musician", "author", "dancer");
         List<String> sex = Lists.newArrayList("female", "male", "transgender");
+        final var password = passwordEncoder.encode("testpass");
         range(0, 30).forEach(i -> {
             final var randomString = RandomStringUtils.random(5, true, false).toLowerCase();
-            final var sequence = artistService.generateUniqUid(randomString, Artist.SEQUENCE_NAME);
-            final var lastName = randomString + randomString;
+            final var sequence = uniqID.generateUniqUid(randomString, Artist.SEQUENCE_NAME);
 
-            final var artist = new Artist(sequence);
+            final var artist = new Artist(sequence, password);
+            artist.setRole("USER");
             artist.setAge(random.nextInt(90));
             artist.setFirstName(randomString);
-            artist.setLastName(lastName);
+            artist.setLastName(randomString + randomString);
 
             artist.setEmail(randomString + email.get(random.nextInt(email.size())));
             artist.setCategory(category.get(random.nextInt(category.size())));
             artist.setGenre(geners.get(random.nextInt(geners.size())));
             artist.setSex(sex.get(random.nextInt(sex.size())));
-            artistRepository.save(artist);
+            artistAutoRepository.save(artist);
         });
-        artistRepository.save(new Artist("uidTester"));
+        artistAutoRepository.save(new Artist("uidTester", password));
     }
 
     @Test
@@ -92,12 +89,6 @@ class ArtistRepositoryServiceTest {
     }
 
     @Test
-    void findAgeOver18() {
-        final List<Artist> ageOver = artistService.findAgeOver(18);
-        ageOver.forEach(System.out::println);
-    }
-
-    @Test
     void findByGender() {
         final ArrayList<Document> indexing = artistService.find("transgender");
         indexing.forEach(print);
@@ -113,7 +104,7 @@ class ArtistRepositoryServiceTest {
     void updateUser() {
         range(0, 10).mapToObj(v -> valueOf(random.nextInt(100))).forEach(randomValue -> {
             artistService.updateUser("uidTester", "age", randomValue);
-            assertEquals(true, artistService.findByUid("uidTester").toJson().contains(randomValue));
+            assertTrue(artistService.findByUid("uidTester").toJson().contains(randomValue));
         });
     }
 
@@ -138,6 +129,4 @@ class ArtistRepositoryServiceTest {
         final ArrayList<Document> into = artistService.getIndexing().into(new ArrayList<>());
         into.forEach(System.out::println);
     }
-
-
 }

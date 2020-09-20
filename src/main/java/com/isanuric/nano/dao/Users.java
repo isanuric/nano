@@ -1,6 +1,8 @@
 package com.isanuric.nano.dao;
 
+//import jakarta.validation.constraints.Pattern;
 
+import javax.validation.constraints.Pattern;
 import jdk.jfr.DataAmount;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -17,11 +19,10 @@ public class Users {
     @Id
     public ObjectId _id;
 
+    @Pattern(regexp = "^[a-zA-Z0-9_]*$")
     public String username;
-    public String password;
 
-    public Users(String username, String password) {
-        this.username = username;
-        this.password = password;
-    }
+    public String password;
+    public String role;
+
 }

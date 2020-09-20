@@ -1,6 +1,5 @@
 package com.isanuric.nano.config;
 
-import com.isanuric.nano.NanoUserDetailsService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -27,7 +26,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity httpSecurity) throws Exception {
+        logger.info("Start configure");
         httpSecurity
+                .authorizeRequests()
+                .antMatchers("artist/all").hasRole("USER")
+                .and()
                 .csrf().disable()
                 .authorizeRequests().anyRequest().authenticated()
                 .and().httpBasic()
@@ -38,6 +41,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(AuthenticationManagerBuilder authenticationManagerBuilder) throws Exception {
         logger.info("configure: [{}]", authenticationManagerBuilder.isConfigured());
         authenticationManagerBuilder.userDetailsService(nanoUserDetailsService);
+        logger.info("configure: [{}]", authenticationManagerBuilder.isConfigured());
     }
 
     @Bean
