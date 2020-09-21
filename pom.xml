@@ -45,6 +45,21 @@
 			<artifactId>spring-boot-starter-security</artifactId>
 			<groupId>org.springframework.boot</groupId>
 		</dependency>
+		<dependency>
+			<artifactId>spring-boot-starter-webflux</artifactId>
+			<groupId>org.springframework.boot</groupId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<artifactId>nimbus-jose-jwt</artifactId>
+			<groupId>com.nimbusds</groupId>
+			<version>7.0.1</version>
+		</dependency>
+		<dependency>
+			<artifactId>guava</artifactId>
+			<groupId>com.google.guava</groupId>
+			<version>29.0-jre</version>
+		</dependency>
 
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -57,31 +72,6 @@
 				</exclusion>
 			</exclusions>
 		</dependency>
-		<dependency>
-			<artifactId>spring-boot-starter-webflux</artifactId>
-			<groupId>org.springframework.boot</groupId>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<artifactId>nimbus-jose-jwt</artifactId>
-			<groupId>com.nimbusds</groupId>
-			<version>7.0.1</version>
-		</dependency>
-		<!--		<dependency>-->
-		<!--			<groupId>org.springframework.boot</groupId>-->
-		<!--			<artifactId>spring-boot-configuration-processor</artifactId>-->
-		<!--			<version>2.1.4.RELEASE</version>-->
-		<!--		</dependency>-->
-		<!--        <dependency>-->
-		<!--            <groupId>javax.validation</groupId>-->
-		<!--            <artifactId>validation-api</artifactId>-->
-		<!--            <version>2.0.1.Final</version>-->
-		<!--        </dependency>-->
-		<!--		<dependency>-->
-		<!--			<groupId>jakarta.validation</groupId>-->
-		<!--			<artifactId>jakarta.validation-api</artifactId>-->
-		<!--			<version>3.0.0</version>-->
-		<!--		</dependency>-->
 	</dependencies>
 
 	<build>

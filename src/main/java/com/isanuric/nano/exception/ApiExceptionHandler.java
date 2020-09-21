@@ -1,6 +1,7 @@
 package com.isanuric.nano.exception;
 
 
+import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
 
 import java.text.SimpleDateFormat;
@@ -30,15 +31,14 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
         final var localizedMessage = ex.getLocalizedMessage();
         jsonObject.put("error", localizedMessage);
         jsonObject.put("status", status);
-        return new ResponseEntity<>(jsonObject, HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(jsonObject, BAD_REQUEST);
     }
-
 
     @Override
     protected ResponseEntity<Object> handleHttpMessageNotReadable(HttpMessageNotReadableException ex,
             HttpHeaders headers, HttpStatus status, WebRequest request) {
         String generallMessage = "Malformed JSON request";
-        return new ResponseEntity<>(new ApiException(HttpStatus.BAD_REQUEST, generallMessage, ex), status);
+        return new ResponseEntity<>(new ApiException(BAD_REQUEST, generallMessage, ex), status);
     }
 
     @ExceptionHandler(EntityNotFoundException.class)
@@ -46,7 +46,12 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
         String generalMessage = "404, Not Found";
         ApiException apiError = new ApiException(NOT_FOUND);
         apiError.setMessage(ex.getMessage());
-        return new ResponseEntity<>(new ApiException(HttpStatus.BAD_REQUEST, generalMessage, ex), NOT_FOUND);
+        return new ResponseEntity<>(new ApiException(BAD_REQUEST, generalMessage, ex), NOT_FOUND);
 
+    }
+
+    @ExceptionHandler(IllegalArgumentException.class)
+    protected ResponseEntity<Object> handleIApiIllegalArgumentException(IllegalArgumentException ex) {
+        return new ResponseEntity<>(new ApiException(BAD_REQUEST, "400, Bad Request", ex), BAD_REQUEST);
     }
 }

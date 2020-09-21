@@ -1,13 +1,11 @@
-package com.isanuric.nano.dao;
+package com.isanuric.nano.artist;
 
+import static com.google.common.base.Strings.repeat;
 import static java.lang.String.format;
 import static java.lang.String.valueOf;
 import static java.util.stream.IntStream.range;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import com.isanuric.nano.artist.Artist;
-import com.isanuric.nano.artist.ArtistAutoRepository;
-import com.isanuric.nano.artist.DocumentRepositoryService;
 import com.isanuric.nano.dao.uniqid.UniqID;
 import com.mongodb.client.FindIterable;
 import java.util.ArrayList;
@@ -58,7 +56,7 @@ class DocumentRepositoryServiceTest {
             artist.setRole("USER");
             artist.setAge(random.nextInt(90));
             artist.setFirstName(randomString);
-            artist.setLastName(randomString + randomString);
+            artist.setLastName(repeat(randomString, 2));
 
             artist.setEmail(randomString + email.get(random.nextInt(email.size())));
             artist.setCategory(category.get(random.nextInt(category.size())));
@@ -66,7 +64,10 @@ class DocumentRepositoryServiceTest {
             artist.setSex(sex.get(random.nextInt(sex.size())));
             artistAutoRepository.save(artist);
         });
-        artistAutoRepository.save(new Artist("uidTester", password));
+
+        final var admin = new Artist("adminOne", password);
+        admin.setRole("AMIN");
+        artistAutoRepository.save(admin);
     }
 
     @Test

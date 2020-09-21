@@ -1,4 +1,4 @@
-package com.isanuric.nano;
+package com.isanuric.nano.artist;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

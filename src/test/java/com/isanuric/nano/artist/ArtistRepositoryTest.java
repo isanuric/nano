@@ -1,8 +1,6 @@
-package com.isanuric.nano.dao;
+package com.isanuric.nano.artist;
 
 import com.isanuric.nano.BaseTest;
-import com.isanuric.nano.artist.Artist;
-import com.isanuric.nano.artist.ArtistRepository;
 import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
