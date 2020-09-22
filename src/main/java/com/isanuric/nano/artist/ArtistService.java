@@ -10,7 +10,6 @@ import com.isanuric.nano.dao.uniqid.UniqID;
 import com.isanuric.nano.exception.EntityNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
-import javax.validation.Valid;
 import net.minidev.json.JSONObject;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
@@ -70,14 +69,15 @@ public class ArtistService {
         return jsonObject;
     }
 
-    public Artist udateValue(String uid, @Valid Artist artist) {
+    public Artist updateValue(String uid, String key, String value) {
 //        final var query = getQuery();
 //        query.fields().include("uid").include("age").exclude("id");
 //        query.addCriteria(Criteria.where("uid").gt(uid));
 //        artistRepository.findAndReplace(query, "aaa");
 
         final Query query = query(where("uid").is(uid));
-        final Update update = update("email", "changed@gmail.com");
+        query.fields().exclude("id");
+        final Update update = update(key, value);
         artistRepository.update(query, update);
         return this.findByUid(uid);
     }

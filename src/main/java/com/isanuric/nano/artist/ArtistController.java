@@ -30,14 +30,11 @@ public class ArtistController {
     private static final Logger logger = LoggerFactory.getLogger(ArtistController.class);
 
     private final ArtistAutoRepository artistAutoRepository;
-    private final ArtistRepository artistRepository;
     private final ArtistService artistService;
 
     @Autowired
-    public ArtistController(ArtistAutoRepository artistAutoRepository,
-            ArtistRepository artistRepository, ArtistService artistService) {
+    public ArtistController(ArtistAutoRepository artistAutoRepository, ArtistService artistService) {
         this.artistAutoRepository = artistAutoRepository;
-        this.artistRepository = artistRepository;
         this.artistService = artistService;
     }
 
@@ -70,7 +67,7 @@ public class ArtistController {
             @Valid @Pattern(regexp = "^[a-zA-Z0-9]*$") @PathVariable String uid,
             @Valid @RequestBody Artist artist) {
         checkArgument(uid != null, "uid: %s must not be null", uid);
-        return this.artistService.udateValue(uid, artist);
+        return this.artistService.updateValue(uid, "email", "new@gmail.com");
     }
 
     @GetMapping("/all")
