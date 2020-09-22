@@ -20,7 +20,31 @@ class ArtistServiceTest extends BaseTest {
 
     @Test
     void findAllByEmail() {
-        final var allByEmail = artistService.findAllByEmail("gmail.com");
-        assertTrue(allByEmail.size() > 0);
+        assertTrue(artistService.findAllByEmail("gmail.com").size() > 0);
+    }
+
+    @Test
+    void findAllByUidsEmail() {
+        assertTrue(artistService.findAllUidsByEmail("gmail.com").size() > 0);
+    }
+
+    @Test
+    void findAllByGenre() {
+        assertTrue(artistService.findAllByGenre("Magic realism").size() > 0);
+    }
+
+    @Test
+    void findAllBySex() {
+        assertTrue(artistService.findAllBySex("female").size() > 0);
+    }
+
+    @Test
+    void findAllByCategory() {
+        assertTrue(artistService.findAllByCategory("musician").size() > 0);
+    }
+
+    @Test
+    void findAllByRole() {
+        assertTrue(artistService.findAllByRole("USER").size() > 0);
     }
 }

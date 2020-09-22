@@ -1,6 +1,7 @@
 package com.isanuric.nano.artist;
 
 import static com.google.common.base.Preconditions.checkArgument;
+import static java.util.stream.Collectors.toList;
 import static org.springframework.data.mongodb.core.query.Criteria.where;
 import static org.springframework.data.mongodb.core.query.Query.query;
 import static org.springframework.data.mongodb.core.query.Update.update;
@@ -51,14 +52,24 @@ public class ArtistService {
         return this.find("category", category);
     }
 
-    public List<Artist> findAllByEmail(String email) {
-        return artistRepository.find(query(Criteria.where("email").regex(email)));
+    public List<Artist> findAllByRole(String category) {
+        return this.find("role", category);
     }
 
     public List<Artist> find(String key, String value) {
         final var artists = artistRepository.find(createQuery(key, value));
-        checkArgument(!isEmpty(artists), "uid %s not found", value);
+        checkArgument(!isEmpty(artists), "uid: %s not found", value);
         return artists;
+    }
+
+    public List<String> findAllUidsByEmail(String email) {
+        final Query quary = query(where("email").regex(email));
+        quary.fields().include("uid");
+        return artistRepository.find(quary).stream().map(Artist::getUid).collect(toList());
+    }
+
+    public List<Artist> findAllByEmail(String email) {
+        return artistRepository.find(query(Criteria.where("email").regex(email)));
     }
 
     private Query createQuery(String key, String value) {
