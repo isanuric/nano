@@ -1,13 +1,12 @@
 package com.isanuric.nano.artist;
 
-import static java.lang.String.format;
+import static com.google.common.base.Preconditions.checkArgument;
 import static org.springframework.data.mongodb.core.query.Criteria.where;
 import static org.springframework.data.mongodb.core.query.Query.query;
 import static org.springframework.data.mongodb.core.query.Update.update;
 import static org.springframework.util.ObjectUtils.isEmpty;
 
 import com.isanuric.nano.dao.uniqid.UniqID;
-import com.isanuric.nano.exception.EntityNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
 import net.minidev.json.JSONObject;
@@ -40,15 +39,25 @@ public class ArtistService {
         return this.find("uid", uid).get(0);
     }
 
-    public List<Artist> findByGenre(String genre) {
+    public List<Artist> findAllByGenre(String genre) {
         return this.find("genre", genre);
+    }
+
+    public List<Artist> findAllBySex(String sex) {
+        return this.find("sex", sex);
+    }
+
+    public List<Artist> findAllByCategory(String category) {
+        return this.find("category", category);
+    }
+
+    public List<Artist> findAllByEmail(String email) {
+        return artistRepository.find(query(Criteria.where("email").regex(email)));
     }
 
     public List<Artist> find(String key, String value) {
         final var artists = artistRepository.find(createQuery(key, value));
-        if (isEmpty(artists)) {
-            throw new EntityNotFoundException(format("uid %s not found", value));
-        }
+        checkArgument(!isEmpty(artists), "uid %s not found", value);
         return artists;
     }
 
@@ -81,5 +90,4 @@ public class ArtistService {
         artistRepository.update(query, update);
         return this.findByUid(uid);
     }
-
 }

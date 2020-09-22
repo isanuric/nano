@@ -47,7 +47,7 @@ public class ArtistController {
     @GetMapping("/genre/{genre}")
     public List<Artist> findByGenre(@Valid @Pattern(regexp = "^[a-zA-Z0-9]*$") @PathVariable String genre) {
         notNull(genre, "genre must not be empty");
-        return this.artistService.findByGenre(genre);
+        return this.artistService.findAllByGenre(genre);
     }
 
     @GetMapping("/genre-not/{genre}")
