@@ -50,7 +50,7 @@ class DocumentRepositoryServiceTest {
         final var password = passwordEncoder.encode("testpass");
         range(0, 30).forEach(i -> {
             final var randomString = RandomStringUtils.random(5, true, false).toLowerCase();
-            final var sequence = uniqID.generateUniqUid(randomString, Artist.SEQUENCE_NAME);
+            final var sequence = uniqID.generateUniqId(randomString, Artist.SEQUENCE_NAME);
 
             final var artist = new Artist(sequence, password);
             artist.setRole("USER");
@@ -64,6 +64,10 @@ class DocumentRepositoryServiceTest {
             artist.setSex(sex.get(random.nextInt(sex.size())));
             artistAutoRepository.save(artist);
         });
+
+        final var user = new Artist("userOne", password);
+        user.setRole("USER");
+        artistAutoRepository.save(user);
 
         final var admin = new Artist("adminOne", password);
         admin.setRole("AMIN");
@@ -108,8 +112,8 @@ class DocumentRepositoryServiceTest {
     @Test
     void updateUser() {
         range(0, 10).mapToObj(v -> valueOf(random.nextInt(100))).forEach(randomValue -> {
-            artistService.updateUser("uidTester", "age", randomValue);
-            assertTrue(artistService.findByUid("uidTester").toJson().contains(randomValue));
+            artistService.updateUser("adminOne", "age", randomValue);
+            assertTrue(artistService.findByUid("adminOne").toJson().contains(randomValue));
         });
     }
 

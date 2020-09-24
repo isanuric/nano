@@ -14,25 +14,22 @@ import net.minidev.json.JSONObject;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
 public class ArtistService {
 
     private final UniqID uniqID;
-    private final PasswordEncoder passwordEncoder;
     private final ArtistRepository artistRepository;
 
-    public ArtistService(UniqID uniqID, PasswordEncoder passwordEncoder, ArtistRepository artistRepository) {
+    public ArtistService(UniqID uniqID, ArtistRepository artistRepository) {
         this.uniqID = uniqID;
-        this.passwordEncoder = passwordEncoder;
         this.artistRepository = artistRepository;
     }
 
     public Artist save(Artist artist) {
-        artist.setUid(uniqID.generateUniqUid(artist.getLastName(), Artist.SEQUENCE_NAME));
-        artist.setPassword(passwordEncoder.encode(artist.getPassword()));
+        artist.setUid(uniqID.generateUniqId(artist.getLastName(), Artist.SEQUENCE_NAME));
+        artist.setPassword(uniqID.encodePassword(artist.getPassword()));
         return artistRepository.save(artist);
     }
 
@@ -62,18 +59,18 @@ public class ArtistService {
         return artists;
     }
 
+    private Query createQuery(String key, String value) {
+        return query(Criteria.where(key).is(value));
+    }
+
     public List<String> findAllUidsByEmail(String email) {
-        final Query quary = query(where("email").regex(email));
-        quary.fields().include("uid");
-        return artistRepository.find(quary).stream().map(Artist::getUid).collect(toList());
+        final Query query = query(where("email").regex(email));
+        query.fields().include("uid");
+        return artistRepository.find(query).stream().map(Artist::getUid).collect(toList());
     }
 
     public List<Artist> findAllByEmail(String email) {
         return artistRepository.find(query(Criteria.where("email").regex(email)));
-    }
-
-    private Query createQuery(String key, String value) {
-        return query(Criteria.where(key).is(value));
     }
 
     public List<JSONObject> findByGenreNotEqual(String value) {

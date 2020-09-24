@@ -1,5 +1,6 @@
 package com.isanuric.nano.artist;
 
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient;
@@ -16,21 +17,22 @@ class ArtistControllerTest {
 
     @Autowired
     private WebTestClient webTestClient;
+    private static final String AUTHENTICATION = "Basic " + Base64Utils.encodeToString(("userOne:testpass").getBytes());
 
     @Test
     void get() {
-        final var authentication = "Basic " + Base64Utils.encodeToString(("EHZQW101:testpass").getBytes());
+        final var authentication = "Basic " + Base64Utils.encodeToString(("userOne:testpass").getBytes());
         webTestClient.get().uri("artist/all")
                 .header(HttpHeaders.AUTHORIZATION, authentication)
                 .exchange()
                 .expectStatus().isOk();
     }
 
+    @Disabled
     @Test
     void add() {
-        final var auth = "Basic " + Base64Utils.encodeToString(("EHZQW101:testpass").getBytes());
         webTestClient.post().uri("/artist/add")
-                .header(HttpHeaders.AUTHORIZATION, auth)
+                .header(HttpHeaders.AUTHORIZATION, AUTHENTICATION)
                 .exchange()
                 .expectStatus().isOk();
     }
